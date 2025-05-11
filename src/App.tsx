@@ -23,9 +23,9 @@ const teacherProfile = {
     email: 'riedel@e-mirim.hs.kr',
   },
   hashtags: [
-    'Agency', '교과융합', '글쓰기교육', '국제공동수업', '토론교육',
-    '인공지능융합교육', '생태전환', '다문화', '기초학력', '직업기초능력',
-    'AI', '에듀테크', 'AIDT'
+    '학습자중심수업', '인공지능융합교육', '사회정서교육', '생태전환',
+    '교과융합', '다문화', '에듀테크',
+    '기초학력', '문해력', '독해력', '작문력', '어휘력',  '직업기초능력', '디지털 글쓰기', '프로젝트'
   ],
   careers: [
     { position: '미림마이스터고등학교 근무(2012 ~ 현재)',},
@@ -110,7 +110,7 @@ const App: React.FC = () => {
           
           {/* Hashtags Section */}
           <section className="fade-in-section" style={{ animationDelay: '0.2s' }}>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-l-4 border-blue-500 pl-3">전문 분야 및 관심사</h2>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-l-4 border-blue-500 pl-3">관심사</h2>
             <div className="flex flex-wrap gap-2">
               {teacherProfile.hashtags.map((tag, index) => (
                 <span
