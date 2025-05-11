@@ -1,0 +1,37 @@
+/* Import Tailwind CSS directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global styles */
+body {
+  /* Using a common, clean sans-serif font stack with Korean language support */
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7fafc; /* Light gray background (Tailwind's gray-100) */
+  color: #2d3748; /* Darker gray text for content (Tailwind's gray-800) */
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased; /* Smooth fonts on WebKit browsers */
+  -moz-osx-font-smoothing: grayscale; /* Smooth fonts on Firefox */
+}
+
+/* Custom scrollbar for a cleaner look (optional) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #edf2f7; /* Tailwind's gray-200 */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #a0aec0; /* Tailwind's gray-500 */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #718096; /* Tailwind's gray-600 */
+}
