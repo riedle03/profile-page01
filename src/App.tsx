@@ -7,6 +7,12 @@ interface Award {
   institution: string;
 }
 
+// Define the structure for a career entry
+interface Career {
+  position: string;
+  organization: string;
+}
+
 // Teacher's profile data
 const teacherProfile = {
   name: '이대형',
@@ -17,8 +23,19 @@ const teacherProfile = {
     email: 'riedel@e-mirim.hs.kr',
   },
   hashtags: [
-    'AI융합', '생태전환', '사회정서', '다문화', '글쓰기','토론', '국제공동수업', '교과융합', 'Agency', '기초학력', '직업기초능력', '에듀테크', '문해력', '독해력', '작문력', '어휘력'
+    'Agency', '교과융합', '글쓰기교육', '국제공동수업', '토론교육',
+    '인공지능융합교육', '생태전환', '다문화', '기초학력', '직업기초능력',
+    'AI', '에듀테크', 'AIDT'
   ],
+  careers: [
+    { position: '미림마이스터고등학교 근무(2012 ~ 현재)',},
+    { position: '터치 교사단',  },
+    { position: '성취평가 선도교원',  },
+    { position: '교실혁명 선도교사',  },
+    { position: '사회정서교육 선도교사',  },
+    { position: '터치 교사단 우수교원 글로벌 에듀테크 체험 연수 참가(영국 런던)',  },
+    { position: 'AIEDAP 마스터교원 수업실천 우수 해외 연수 참가(미국 캘리포니아)' },
+  ] as Career[],
   awards: [
     { title: '제4,5회 AI융합교육 수업 사례 공모전 AI교과융합 부문 교육부장관상', institution: '교육부' },
     { title: '2023, 2024 기후환경교육 실천을 위한 교사 학습공동체 우수콘텐츠 장관상', institution: '교육부, 환경부' },
@@ -106,10 +123,32 @@ const App: React.FC = () => {
             </div>
           </section>
 
+          {/* Career Section - Added between Hashtags and Awards */}
+          <section className="fade-in-section" style={{ animationDelay: '0.3s' }}>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-l-4 border-blue-500 pl-3">주요 경력</h2>
+            <div className="space-y-1">
+              {teacherProfile.careers.map((career, index) => (
+                <div key={index} className="career-item flex items-start hover:bg-blue-50 p-3 rounded-lg transition-colors duration-300">
+                  <div className="career-dot bg-blue-500 rounded-full min-w-2 h-2 mt-2 mr-3"></div>
+                  <div className="career-content">
+                    <p className="text-lg font-medium text-gray-800">{career.position}</p>
+                    {career.organization && (
+                      <p className="text-sm text-blue-600">
+                        <span className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                          {career.organization}
+                        </span>
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* Awards Section */}
           <section className="fade-in-section" style={{ animationDelay: '0.4s' }}>
             <h2 className="text-2xl font-semibold text-gray-800 mb-6 border-l-4 border-blue-500 pl-3">주요 수상</h2>
-            <div className="space-y-6">
+            <div className="space-y-2">
               {teacherProfile.awards.map((award, index) => (
                 <div key={index} className="award-card transform hover:scale-105 transition-transform duration-300 ease-out">
                   <h3 className="award-title text-lg">{award.title}</h3>
