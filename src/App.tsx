@@ -48,8 +48,8 @@ const teacherProfile = {
     { position: 'AIEDAP 마스터교원 수업실천 우수 해외 연수 참가(미국 캘리포니아)' },
   ] as Career[],
   books: [
-    { title: '요즘 교사를 위한 AI 디지털 수업 설계 가이드', subtitle: '공저', publisher: '한빛미디어', link: 'https://www.yes24.com/product/goods/151350143', image: 'https://image.yes24.com/goods/151350143/XL' },
-    { title: '대한민국 교육 르네상스', subtitle: '공저', publisher: '앤써북', link: 'https://www.yes24.com/product/goods/167476779', image: 'https://image.yes24.com/goods/167476779/XL' },
+    { title: '요즘 교사를 위한 AI 디지털 수업 설계 가이드', subtitle: '공저', publisher: '한빛미디어', link: 'https://www.yes24.com/product/goods/151350143', image: 'https://shopping-phinf.pstatic.net/20231201_215/1701375394627ZxJ1B_JPEG/6bc3dbf3-6ee2-4f00-a97c-16a69c87f13f.jpg' },
+    { title: '대한민국 교육 르네상스', subtitle: '공저', publisher: '앤써북', link: 'https://www.yes24.com/product/goods/167476779', image: 'https://shopping-phinf.pstatic.net/20240604_127/17176851343970VYKL_JPEG/5ce8ff02-4cfd-4a42-adc9-2acf9e8f8bf5.jpg' },
   ] as Book[],
   awards: [
     { title: '제19회 디지털교육연구대회 전국대회 1등급 교육부장관상', institution: '교육부' },
@@ -198,15 +198,16 @@ const App: React.FC = () => {
                 {teacherProfile.books.map((book, index) => (
                   <Card key={index} className="flex flex-col h-full group overflow-hidden">
                     {book.image && (
-                      <div className="relative mb-6 h-64 overflow-hidden rounded-2xl bg-gray-100/50">
+                      <div className="relative mb-6 h-80 w-full overflow-hidden rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center shadow-md">
                         <img
                           src={book.image}
                           alt={book.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out shadow-md"
+                          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
                           }}
+                          loading="lazy"
                         />
                       </div>
                     )}
