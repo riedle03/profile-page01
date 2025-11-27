@@ -18,6 +18,7 @@ interface Book {
   subtitle?: string;
   publisher: string;
   link?: string;
+  image?: string;
 }
 
 // --- Data ---
@@ -47,8 +48,8 @@ const teacherProfile = {
     { position: 'AIEDAP 마스터교원 수업실천 우수 해외 연수 참가(미국 캘리포니아)' },
   ] as Career[],
   books: [
-    { title: '요즘 교사를 위한 AI 디지털 수업 설계 가이드', subtitle: '공저', publisher: '한빛미디어', link: 'https://www.yes24.com/product/goods/151350143' },
-    { title: '대한민국 교육 르네상스', subtitle: '공저', publisher: '앤써북', link: 'https://www.yes24.com/product/goods/167476779' },
+    { title: '요즘 교사를 위한 AI 디지털 수업 설계 가이드', subtitle: '공저', publisher: '한빛미디어', link: 'https://www.yes24.com/product/goods/151350143', image: 'https://image.yes24.com/goods/151350143/XL' },
+    { title: '대한민국 교육 르네상스', subtitle: '공저', publisher: '앤써북', link: 'https://www.yes24.com/product/goods/167476779', image: 'https://image.yes24.com/goods/167476779/XL' },
   ] as Book[],
   awards: [
     { title: '제19회 디지털교육연구대회 전국대회 1등급 교육부장관상', institution: '교육부' },
@@ -195,7 +196,20 @@ const App: React.FC = () => {
               <SectionTitle icon={<BookOpen size={28} />} title="출간 도서" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {teacherProfile.books.map((book, index) => (
-                  <Card key={index} className="flex flex-col h-full group">
+                  <Card key={index} className="flex flex-col h-full group overflow-hidden">
+                    {book.image && (
+                      <div className="relative mb-6 h-64 overflow-hidden rounded-2xl bg-gray-100/50">
+                        <img
+                          src={book.image}
+                          alt={book.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out shadow-md"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-4">
                          <span className="bg-purple-100/50 text-purple-700 backdrop-blur-md text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Book</span>
