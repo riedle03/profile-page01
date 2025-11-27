@@ -48,7 +48,7 @@ const teacherProfile = {
   ] as Career[],
   books: [
     { title: '요즘 교사를 위한 AI 디지털 수업 설계 가이드', subtitle: '공저', publisher: '한빛미디어', link: 'https://www.yes24.com/product/goods/151350143' },
-    { title: '대한민국 교육 르네상스', subtitle: '공저', publisher: '앤써북' },
+    { title: '대한민국 교육 르네상스', subtitle: '공저', publisher: '앤써북', link: 'https://www.yes24.com/product/goods/167476779' },
   ] as Book[],
   awards: [
     { title: '제19회 디지털교육연구대회 전국대회 1등급 교육부장관상', institution: '교육부' },
