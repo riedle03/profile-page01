@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, BookOpen, Award, Briefcase, Hash } from 'lucide-react';
+import { Phone, Mail, BookOpen, Award, Briefcase, Hash, GraduationCap, ExternalLink } from 'lucide-react';
 import './App.css'; // App.css 파일을 불러옵니다.
 
 // --- Interfaces ---
@@ -19,6 +19,17 @@ interface Book {
   publisher: string;
   link?: string;
   image?: string;
+  badge?: string;
+}
+
+interface Course {
+  title: string;
+  platform: string;
+  hours: string;
+  description: string;
+  link: string;
+  image?: string;
+  badge?: string;
 }
 
 // --- Data ---
@@ -48,9 +59,62 @@ const teacherProfile = {
     { position: 'AIEDAP 마스터교원 수업실천 우수 해외 연수 참가(미국 캘리포니아)' },
   ] as Career[],
   books: [
+    { title: '요즘 교사를 위한 웹앱 만들기 with 바이브 코딩', subtitle: '공저 · 2026년 9월', publisher: '한빛미디어', link: 'https://www.yes24.com/product/goods/196020146', image: '/covers/book-vibecoding.jpg', badge: '신간' },
+    { title: '전국 1등급 족보로 완성하는 디지털교육연구대회', subtitle: '공저', publisher: '길벗', link: 'https://www.yes24.com/product/goods/184394026', image: '/covers/book-research.jpg' },
     { title: '요즘 교사를 위한 AI 디지털 수업 설계 가이드', subtitle: '공저', publisher: '한빛미디어', link: 'https://www.yes24.com/product/goods/151350143', image: '/aidigital.jpg' },
     { title: '대한민국 교육 르네상스', subtitle: '공저', publisher: '앤써북', link: 'https://www.yes24.com/product/goods/167476779', image: '/edu.jpg' },
   ] as Book[],
+  courses: [
+    {
+      title: '사회정서교육 기반 학급 운영 전략 – 그라운드로 만드는 행복한 교실(중등편)',
+      platform: '비바샘 원격교육연수원(비상교육)',
+      hours: '직무 6차시 · 강사 이대형·이영준',
+      description: 'SEL 5대 핵심역량으로 학급을 설계하고, 감정일기·퀘스트·역량카드·AI 어시스턴트를 학급 운영과 회복적 생활지도에 적용합니다.',
+      link: 'https://t.vivasam.com/courses/bundle/c26-010',
+      image: '/covers/course-vivasam-sel.png',
+      badge: '신규',
+    },
+    {
+      title: '1등급은 다르다! 수상자들의 디지털교육 연구대회 필승 전략',
+      platform: '아이스크림 원격교육연수원',
+      hours: '4주 15차시',
+      description: '디지털 교수학습분과 심사 기준을 분석해 연구대회 전략을 세웁니다.',
+      link: 'https://teacher.i-scream.co.kr/course/crs/creditView.do?crsCode=7352',
+      image: '/covers/course-iscream-research.gif',
+    },
+    {
+      title: '학생이 먼저 움직이는 수업 비법! AI 패들렛 수업',
+      platform: '아이스크림 원격교육연수원',
+      hours: '4주 15차시 · 강사 이대형 외',
+      description: '패들렛을 중심으로 디지털 도구를 익혀 학생의 능동적 참여를 이끌어 냅니다.',
+      link: 'https://teacher.i-scream.co.kr/course/crs/creditView.do?crsCode=7296&searchOrdinalTyCode=TY01',
+      image: '/covers/course-iscream-padlet.gif',
+    },
+    {
+      title: '디지털 수업? 설계부터 평가까지 여기 다 있다! [연수+도서 SET]',
+      platform: 'T셀파 원격교육연수원',
+      hours: '15시간 · 강사 이대형 외',
+      description: '2022 개정 교육과정 기반 디지털 수업 설계와 AI 도구를 활용한 맞춤형 평가·교수학습 웹앱 제작.',
+      link: 'https://edu.tsherpa.co.kr/Product/Detail/1968',
+      image: '/covers/course-tsherpa.png',
+    },
+    {
+      title: '수업 및 업무 효율 UP! AI와 ChatGPT 200% 활용법',
+      platform: '비바샘 원격교육연수원(비상교육)',
+      hours: '직무 15차시 · 강사진에 이대형',
+      description: 'ChatGPT·Gemini·캔바·노트북LM·브리스크 티칭으로 평가·피드백·생기부 업무를 효율화합니다.',
+      link: 'https://t.vivasam.com/courses/regular/t25-001',
+      image: '/covers/course-vivasam-ai.jpg',
+    },
+    {
+      title: 'HTHT 교육 실현을 위한 AI 코스웨어 & 디지털교과서 에듀테크 바로 알기',
+      platform: '교육사랑연수원',
+      hours: '15차시/15시간 · 강사진에 이대형',
+      description: 'AI 코스웨어와 디지털교과서로 하이터치 하이테크(HTHT) 교육을 실현합니다.',
+      link: 'https://www.edulove.co.kr/main/subject_view.asp?gcode=s0907&inx=1',
+      image: '/covers/course-edulove.jpg',
+    },
+  ] as Course[],
   awards: [
     { title: '제19회 디지털교육연구대회 전국대회 1등급 교육부장관상', institution: '교육부' },
     { title: '제19회 디지털교육연구대회 서울시 예선 2등급 교육감상', institution: '서울시교육청' },
@@ -213,7 +277,12 @@ const App: React.FC = () => {
                     )}
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-4">
-                         <span className="bg-purple-100/50 text-purple-700 backdrop-blur-md text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Book</span>
+                         <div className="flex items-center gap-2">
+                           <span className="bg-purple-100/50 text-purple-700 backdrop-blur-md text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Book</span>
+                           {book.badge && (
+                             <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">{book.badge}</span>
+                           )}
+                         </div>
                          {book.link && <BookOpen size={20} className="text-gray-400 group-hover:text-blue-600 transition-colors" />}
                       </div>
                       {book.link ? (
@@ -230,6 +299,67 @@ const App: React.FC = () => {
                         <span className="w-2.5 h-2.5 bg-purple-400 rounded-full mr-2.5"></span>
                         {book.publisher}
                       </p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </section>
+
+            {/* Courses - Remote Training Glass Cards */}
+            <section className="animate-fade-in delay-500">
+              <SectionTitle icon={<GraduationCap size={28} />} title="원격연수" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {teacherProfile.courses.map((course, index) => (
+                  <Card key={index} className="flex flex-col h-full group overflow-hidden">
+                    {course.image && (
+                      <div className="relative mb-6 w-full h-44 overflow-hidden rounded-2xl bg-white/60 flex items-center justify-center shadow-md">
+                        <img
+                          src={course.image}
+                          alt={course.title}
+                          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <span className="bg-indigo-100/50 text-indigo-700 backdrop-blur-md text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Course</span>
+                          {course.badge && (
+                            <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">{course.badge}</span>
+                          )}
+                        </div>
+                        <GraduationCap size={20} className="text-gray-400 group-hover:text-blue-600 transition-colors" />
+                      </div>
+                      <a
+                        href={course.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-lg font-extrabold text-gray-900 group-hover:text-blue-700 transition-colors break-keep leading-snug"
+                      >
+                        {course.title}
+                      </a>
+                      <p className="text-sm text-gray-600 mt-3 leading-relaxed break-keep">{course.description}</p>
+                    </div>
+                    <div className="mt-6 pt-4 border-t border-gray-200/30 flex flex-col gap-3">
+                      <div>
+                        <p className="text-sm font-bold text-gray-700 flex items-center">
+                          <span className="w-2.5 h-2.5 bg-indigo-400 rounded-full mr-2.5"></span>
+                          {course.platform}
+                        </p>
+                        <p className="text-xs font-medium text-gray-500 mt-1 ml-5">{course.hours}</p>
+                      </div>
+                      <a
+                        href={course.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 bg-white/60 backdrop-blur-md border border-white/60 text-blue-700 text-sm font-bold px-4 py-2.5 rounded-2xl shadow-sm hover:bg-blue-600 hover:text-white transition-all duration-300"
+                      >
+                        연수 보기 <ExternalLink size={16} />
+                      </a>
                     </div>
                   </Card>
                 ))}
