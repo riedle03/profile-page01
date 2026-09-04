@@ -1,401 +1,327 @@
-import React from 'react';
-import { Phone, Mail, BookOpen, Award, Briefcase, Hash, GraduationCap, ExternalLink } from 'lucide-react';
-import './App.css'; // App.css 파일을 불러옵니다.
+import { ArrowUpRight, Mail, Phone } from 'lucide-react'
 
-// --- Interfaces ---
-interface Award {
-  title: string;
-  institution: string;
-}
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import { useActiveSection } from '@/hooks/use-active-section'
+import { awards, books, careers, courses, profile } from '@/data/profile'
+import { cn } from '@/lib/utils'
 
-interface Career {
-  position: string;
-  organization?: string;
-}
+const sections = [
+  { id: 'books', label: '출간 도서' },
+  { id: 'courses', label: '원격연수' },
+  { id: 'career', label: '경력' },
+  { id: 'awards', label: '수상' },
+]
 
-interface Book {
-  title: string;
-  subtitle?: string;
-  publisher: string;
-  link?: string;
-  image?: string;
-  badge?: string;
-}
+const sectionIds = sections.map((s) => s.id)
 
-interface Course {
-  title: string;
-  platform: string;
-  hours: string;
-  description: string;
-  link: string;
-  image?: string;
-  badge?: string;
-}
+const stats = [
+  { label: '출간 도서', value: books.length, unit: '권' },
+  { label: '원격연수', value: courses.length, unit: '과정' },
+  { label: '수상', value: awards.length, unit: '건' },
+  { label: '교단', value: new Date().getFullYear() - 2012, unit: '년차' },
+]
 
-// --- Data ---
-const teacherProfile = {
-  name: '이대형',
-  school: '미림마이스터고 국어교사',
-  tagline: '누구나 쉽게 AI 디지털 기반 교육혁신!',
-  contact: {
-    phone: '010-9120-0829',
-    email: 'riedel@e-mirim.hs.kr',
-  },
-  hashtags: [
-    '학습자중심수업', '인공지능융합교육', '사회정서교육', '생태전환',
-    '교과융합', '다문화', '에듀테크',
-    '기초학력', '문해력3.0', '독해력', '작문력', '어휘력',  '직업기초능력', '디지털 글쓰기', 'PBL'
-  ],
-  careers: [
-    { position: '미림마이스터고등학교 근무(2012 ~ 현재)', },
-    { position: '숙명여대 교육대학원 AI융합교육' },
-    { position: '한국외대 사범대학 한국어교육과' },
-    { position: '터치 교사단',  },
-    { position: '성취평가 선도교원',  },
-    { position: '교실혁명 선도교사',  },
-    { position: 'AIEDAP 마스터교원',  },
-    { position: '사회정서교육 선도교사',  },
-    { position: '터치 교사단 우수교원 글로벌 에듀테크 체험 연수 참가(영국 런던)',  },
-    { position: 'AIEDAP 마스터교원 수업실천 우수 해외 연수 참가(미국 캘리포니아)' },
-  ] as Career[],
-  books: [
-    { title: '요즘 교사를 위한 웹앱 만들기 with 바이브 코딩', subtitle: '공저 · 2026년 9월', publisher: '한빛미디어', link: 'https://www.yes24.com/product/goods/196020146', image: '/covers/book-vibecoding.jpg', badge: '신간' },
-    { title: '전국 1등급 족보로 완성하는 디지털교육연구대회', subtitle: '공저', publisher: '길벗', link: 'https://www.yes24.com/product/goods/184394026', image: '/covers/book-research.jpg' },
-    { title: '요즘 교사를 위한 AI 디지털 수업 설계 가이드', subtitle: '공저', publisher: '한빛미디어', link: 'https://www.yes24.com/product/goods/151350143', image: '/aidigital.jpg' },
-    { title: '대한민국 교육 르네상스', subtitle: '공저', publisher: '앤써북', link: 'https://www.yes24.com/product/goods/167476779', image: '/edu.jpg' },
-  ] as Book[],
-  courses: [
-    {
-      title: '사회정서교육 기반 학급 운영 전략 – 그라운드로 만드는 행복한 교실(중등편)',
-      platform: '비바샘 원격교육연수원(비상교육)',
-      hours: '직무 6차시 · 강사 이대형·이영준',
-      description: 'SEL 5대 핵심역량으로 학급을 설계하고, 감정일기·퀘스트·역량카드·AI 어시스턴트를 학급 운영과 회복적 생활지도에 적용합니다.',
-      link: 'https://t.vivasam.com/courses/bundle/c26-010',
-      image: '/covers/course-vivasam-sel.png',
-      badge: '신규',
-    },
-    {
-      title: '1등급은 다르다! 수상자들의 디지털교육 연구대회 필승 전략',
-      platform: '아이스크림 원격교육연수원',
-      hours: '4주 15차시',
-      description: '디지털 교수학습분과 심사 기준을 분석해 연구대회 전략을 세웁니다.',
-      link: 'https://teacher.i-scream.co.kr/course/crs/creditView.do?crsCode=7352',
-      image: '/covers/course-iscream-research.gif',
-    },
-    {
-      title: '학생이 먼저 움직이는 수업 비법! AI 패들렛 수업',
-      platform: '아이스크림 원격교육연수원',
-      hours: '4주 15차시 · 강사 이대형 외',
-      description: '패들렛을 중심으로 디지털 도구를 익혀 학생의 능동적 참여를 이끌어 냅니다.',
-      link: 'https://teacher.i-scream.co.kr/course/crs/creditView.do?crsCode=7296&searchOrdinalTyCode=TY01',
-      image: '/covers/course-iscream-padlet.gif',
-    },
-    {
-      title: '디지털 수업? 설계부터 평가까지 여기 다 있다! [연수+도서 SET]',
-      platform: 'T셀파 원격교육연수원',
-      hours: '15시간 · 강사 이대형 외',
-      description: '2022 개정 교육과정 기반 디지털 수업 설계와 AI 도구를 활용한 맞춤형 평가·교수학습 웹앱 제작.',
-      link: 'https://edu.tsherpa.co.kr/Product/Detail/1968',
-      image: '/covers/course-tsherpa.png',
-    },
-    {
-      title: '수업 및 업무 효율 UP! AI와 ChatGPT 200% 활용법',
-      platform: '비바샘 원격교육연수원(비상교육)',
-      hours: '직무 15차시 · 강사진에 이대형',
-      description: 'ChatGPT·Gemini·캔바·노트북LM·브리스크 티칭으로 평가·피드백·생기부 업무를 효율화합니다.',
-      link: 'https://t.vivasam.com/courses/regular/t25-001',
-      image: '/covers/course-vivasam-ai.jpg',
-    },
-    {
-      title: 'HTHT 교육 실현을 위한 AI 코스웨어 & 디지털교과서 에듀테크 바로 알기',
-      platform: '교육사랑연수원',
-      hours: '15차시/15시간 · 강사진에 이대형',
-      description: 'AI 코스웨어와 디지털교과서로 하이터치 하이테크(HTHT) 교육을 실현합니다.',
-      link: 'https://www.edulove.co.kr/main/subject_view.asp?gcode=s0907&inx=1',
-      image: '/covers/course-edulove.jpg',
-    },
-  ] as Course[],
-  awards: [
-    { title: '제19회 디지털교육연구대회 전국대회 1등급 교육부장관상', institution: '교육부' },
-    { title: '제19회 디지털교육연구대회 서울시 예선 2등급 교육감상', institution: '서울시교육청' },
-    { title: '제4,5회 AI융합교육 수업 사례 공모전 AI교과융합 부문 교육부장관상', institution: '교육부' },
-    { title: '2023, 2024 기후환경교육 실천을 위한 교사 학습공동체 우수콘텐츠 장관상', institution: '교육부, 환경부' },
-    { title: '제1회 사회정서 교육 수업사례 공모전 최우수상', institution: '한남대학교' },
-    { title: '2023 교실수업 혁신 유공 표창', institution: '교육부' },
-    { title: '제3회 HTHT 마스터클래스 에듀테크 활용교실 우수사례 초중고 부문 한국디지털교육협회장상', institution: '(사)아시아교육협회' },
-    { title: '2023 직업교육 수업혁신 우수사례 공모전 우수', institution: '서울시교육청' },
-    { title: '2023 디지털 선도학교 터치교사단 우수 사례 발굴 공모전 KERIS원장상', institution: '한국교육학술정보원' },
-    { title: '제15회 다문화교육 우수사례 공모전 국가평생교육진흥원장상', institution: '국가평생교육진흥원 중앙다문화교육센터' },
-    { title: '제1회 교육컨텐츠 영상 제작 아이디어 공모전 최우수상', institution: '사립학교교직원연금공단' },
-    { title: '제1회 생성AI 활용 창작 그림동화 공모전 장려상', institution: '중앙대학교 지역인문학센터' },
-    { title: '제1회 생성형 AI 디지털 아트 대전 입선', institution: '충남콘텐츠코리아랩' },
-    { title: '제9회 미래교육상 장려상', institution: '목정미래재단' },
-    { title: '제4회 신나는 SW·AI교육 수기공모전 한국과학창의재단 이사장상', institution: '한국과학창의재단' },
-    { title: '제3, 4회 나눔·성장 수업문화 공모전 우수상', institution: '서울시교육청' },
-    { title: '제7회 고졸취업 성공수기 공모전 한국직업능력연구원 원장상', institution: '한국직업능력연구원' },
-    { title: '제40회 스승의 날 모범교원 표창', institution: '서울시교육청' },
-  ] as Award[],
-};
-
-// --- Components ---
-
-const SectionTitle: React.FC<{ icon: React.ReactNode; title: string }> = ({ icon, title }) => (
-  <h2 className="flex items-center text-2xl font-bold text-gray-900 mb-8">
-    <span className="p-2 bg-blue-500/10 text-blue-600 rounded-xl mr-3 backdrop-blur-md shadow-sm border border-blue-200/30">{icon}</span>
-    {title}
-  </h2>
-);
-
-const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => (
-  <div className={`bg-white/40 backdrop-blur-xl border border-white/50 rounded-3xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 ${className}`}>
-    {children}
-  </div>
-);
-
-const App: React.FC = () => {
+function SectionHeading({ id, title, meta }: { id: string; title: string; meta: string }) {
   return (
-    // --- Pretendard Font & Global Styles ---
-    <div className="min-h-screen font-sans text-gray-800 relative overflow-hidden bg-[#F2F2F7]">
-      {/* Font Import Link */}
-      <link rel="stylesheet" as="style" crossOrigin="anonymous" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-      
-      {/* Background Blurs for Glassmorphism Effect */}
-      <div className="fixed top-[-20%] left-[-20%] w-[70%] h-[70%] rounded-full bg-blue-400/30 filter blur-[120px] mix-blend-multiply animate-blob pointer-events-none"></div>
-      <div className="fixed bottom-[-20%] right-[-20%] w-[70%] h-[70%] rounded-full bg-purple-400/30 filter blur-[120px] mix-blend-multiply animate-blob animation-delay-2000 pointer-events-none"></div>
-      <div className="fixed top-[30%] left-[30%] w-[60%] h-[60%] rounded-full bg-indigo-400/20 filter blur-[120px] mix-blend-multiply animate-blob animation-delay-4000 pointer-events-none"></div>
+    <div className="mb-7">
+      <div className="flex items-baseline justify-between gap-4">
+        <h2 id={`${id}-heading`} className="text-[15px] font-semibold tracking-tight">
+          {title}
+        </h2>
+        <span className="tabular text-xs text-muted-foreground">{meta}</span>
+      </div>
+      <Separator className="mt-3 bg-border/70" />
+    </div>
+  )
+}
 
-      <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        {/* Main Container with Glass Effect */}
-        <div className="bg-white/30 backdrop-blur-2xl border border-white/40 rounded-[40px] shadow-2xl overflow-hidden">
-        
-          {/* Header Section */}
-          <header className="relative text-center p-12 pb-0 animate-fade-in">
-            <div className="w-48 h-48 rounded-full mx-auto mb-8 p-1.5 bg-gradient-to-tr from-blue-300 to-purple-300 shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-500 ease-out">
-              <div className="w-full h-full rounded-full overflow-hidden bg-white flex items-center justify-center border-4 border-white">
-                {/* Original Image Code with onError logic */}
-                <img
-                  src="/profile-image.jpg" 
-                  alt={`${teacherProfile.name} 프로필 사진`}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.onerror = null; 
-                    target.src = 'https://placehold.co/160x160/CBD5E1/475569?text=Error';
-                    target.alt = '프로필 이미지 로드 실패';
-                  }}
-                />
-              </div>
+export default function App() {
+  const active = useActiveSection(sectionIds)
+  const newBooks = books.filter((b) => b.isNew)
+  const otherBooks = books.filter((b) => !b.isNew)
+  const topAwards = awards.slice(0, 5)
+  const moreAwards = awards.slice(5)
+
+  return (
+    <div className="min-h-svh bg-background">
+      <div className="mx-auto max-w-6xl px-6 py-16 lg:px-10 lg:py-24">
+        <div className="grid gap-16 lg:grid-cols-[minmax(0,296px)_minmax(0,1fr)] lg:gap-24">
+          {/* 좌측 고정 레일 */}
+          <aside className="lg:sticky lg:top-16 lg:self-start">
+            <Avatar className="h-[88px] w-[88px] rounded-2xl ring-1 ring-border">
+              <AvatarImage src={profile.photo} alt={`${profile.name} 프로필 사진`} />
+              <AvatarFallback className="rounded-2xl text-base font-medium">이대형</AvatarFallback>
+            </Avatar>
+
+            <p className="mt-7 text-[13px] font-medium text-muted-foreground">{profile.role}</p>
+            <h1 className="mt-1.5 text-[2.75rem] font-semibold leading-none tracking-[-0.045em]">
+              {profile.name}
+            </h1>
+            <p className="mt-5 text-pretty text-[13.5px] leading-6 text-muted-foreground">
+              {profile.intro}
+            </p>
+
+            <div className="mt-6 flex flex-col gap-2">
+              <Button variant="outline" size="sm" className="tabular justify-start" asChild>
+                <a href={`tel:${profile.contact.phone}`}>
+                  <Phone />
+                  {profile.contact.phone}
+                </a>
+              </Button>
+              <Button variant="outline" size="sm" className="justify-start" asChild>
+                <a href={`mailto:${profile.contact.email}`}>
+                  <Mail />
+                  {profile.contact.email}
+                </a>
+              </Button>
             </div>
-            
-            <h1 className="text-5xl font-extrabold tracking-tight mb-3 text-gray-900">{teacherProfile.name}</h1>
-            <p className="text-2xl text-blue-600 font-semibold mb-6">{teacherProfile.school}</p>
-            <div className="inline-block bg-white/40 backdrop-blur-lg border border-white/50 rounded-full px-8 py-3 shadow-sm">
-              <p className="text-xl font-medium italic text-gray-700">"{teacherProfile.tagline}"</p>
-            </div>
-          </header>
 
-          {/* Main Content */}
-          <main className="p-8 md:p-12 space-y-16">
-            
-            {/* Contact Info - Floating Cards */}
-            <section className="flex flex-col md:flex-row justify-center items-center gap-6 animate-fade-in delay-100">
-              <a 
-                href={`tel:${teacherProfile.contact.phone}`} 
-                className="group flex items-center bg-white/60 backdrop-blur-xl border border-white/60 px-8 py-4 rounded-3xl shadow-md hover:shadow-xl hover:bg-white/80 transition-all duration-300 text-gray-800 font-semibold w-full md:w-auto justify-center"
-              >
-                <div className="bg-blue-500/10 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform backdrop-blur-md">
-                  <Phone size={22} className="text-blue-600" />
+            <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-lg bg-border">
+              {stats.map((s) => (
+                <div key={s.label} className="bg-background px-3.5 py-3">
+                  <dt className="text-[11px] text-muted-foreground">{s.label}</dt>
+                  <dd className="tabular mt-0.5 text-[26px] font-semibold leading-tight tracking-[-0.03em]">
+                    {s.value}
+                    <span className="ml-1 text-[13px] font-normal text-muted-foreground">
+                      {s.unit}
+                    </span>
+                  </dd>
                 </div>
-                {teacherProfile.contact.phone}
-              </a>
-              <a 
-                href={`mailto:${teacherProfile.contact.email}`} 
-                className="group flex items-center bg-white/60 backdrop-blur-xl border border-white/60 px-8 py-4 rounded-3xl shadow-md hover:shadow-xl hover:bg-white/80 transition-all duration-300 text-gray-800 font-semibold w-full md:w-auto justify-center"
-              >
-                <div className="bg-purple-500/10 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform backdrop-blur-md">
-                  <Mail size={22} className="text-purple-600" />
-                </div>
-                {teacherProfile.contact.email}
-              </a>
-            </section>
+              ))}
+            </dl>
 
-            {/* Hashtags */}
-            <section className="animate-fade-in delay-200">
-              <SectionTitle icon={<Hash size={28} />} title="관심 키워드" />
-              <div className="flex flex-wrap gap-3">
-                {teacherProfile.hashtags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="px-5 py-2.5 bg-white/50 backdrop-blur-md border border-white/60 text-gray-700 rounded-2xl text-sm font-semibold hover:bg-blue-600 hover:text-white transition-all duration-300 cursor-default select-none shadow-sm hover:shadow-md hover:-translate-y-1"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            </section>
-
-            {/* Career - Timeline Style with Glass Cards */}
-            <section className="animate-fade-in delay-300">
-              <SectionTitle icon={<Briefcase size={28} />} title="주요 경력" />
-              <div className="space-y-6 ml-4 border-l-2 border-blue-200/50 pl-8 relative">
-                {teacherProfile.careers.map((career, index) => (
-                  <div key={index} className="relative group">
-                    <div className="absolute -left-[41px] top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-4 border-white/80 bg-blue-500 group-hover:bg-blue-600 group-hover:scale-125 transition-all duration-300 shadow-md"></div>
-                    <Card className="flex flex-col md:flex-row md:items-center md:justify-between">
-                      <p className="text-lg font-bold text-gray-800 leading-snug mb-2 md:mb-0">{career.position}</p>
-                      {career.organization && (
-                        <span className="inline-block text-sm font-bold text-blue-700 bg-blue-100/50 backdrop-blur-md px-3 py-1.5 rounded-xl whitespace-nowrap">
-                          {career.organization}
-                        </span>
+            {/* 섹션 길잡이 */}
+            <nav aria-label="섹션 이동" className="mt-8 hidden lg:block">
+              <ul className="space-y-px">
+                {sections.map((s) => (
+                  <li key={s.id}>
+                    <a
+                      href={`#${s.id}`}
+                      aria-current={active === s.id ? 'true' : undefined}
+                      className={cn(
+                        'flex items-center gap-3 rounded-md py-1.5 text-[13px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                        active === s.id
+                          ? 'font-medium text-foreground'
+                          : 'text-muted-foreground hover:text-foreground'
                       )}
-                    </Card>
-                  </div>
+                    >
+                      <span
+                        aria-hidden
+                        className={cn(
+                          'h-px transition-all',
+                          active === s.id ? 'w-7 bg-primary' : 'w-3.5 bg-border'
+                        )}
+                      />
+                      {s.label}
+                    </a>
+                  </li>
                 ))}
-              </div>
-            </section>
+              </ul>
+            </nav>
 
-            {/* Books - Glass Cards Grid */}
-            <section className="animate-fade-in delay-400">
-              <SectionTitle icon={<BookOpen size={28} />} title="출간 도서" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {teacherProfile.books.map((book, index) => (
-                  <Card key={index} className="flex flex-col h-full group overflow-hidden">
-                    {book.image && (
-                      <div className="relative mb-6 w-full aspect-[3/4] overflow-hidden rounded-2xl bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center shadow-md">
+            <div className="mt-8 flex flex-wrap gap-1.5">
+              {profile.keywords.slice(0, 8).map((k) => (
+                <Badge
+                  key={k}
+                  variant="outline"
+                  className="rounded-full border-border/80 px-2.5 py-0.5 text-[11.5px] font-normal text-muted-foreground"
+                >
+                  {k}
+                </Badge>
+              ))}
+            </div>
+          </aside>
+
+          {/* 우측 콘텐츠 */}
+          <main className="space-y-20">
+            {/* 출간 도서 */}
+            <section id="books" aria-labelledby="books-heading" className="scroll-mt-16">
+              <SectionHeading id="books" title="출간 도서" meta={`${books.length}권`} />
+
+              <ul className="grid gap-4 md:grid-cols-2">
+                {newBooks.map((book) => (
+                  <li key={book.title}>
+                    <Card className="flex h-full flex-col bg-muted/40 p-5">
+                      <div className="flex gap-5">
                         <img
-                          src={book.image}
-                          alt={book.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                          }}
-                          crossOrigin="anonymous"
+                          src={book.cover}
+                          alt={`${book.title} 표지`}
+                          className="aspect-[3/4] w-[92px] shrink-0 rounded-md object-cover shadow-sm ring-1 ring-black/5"
                         />
+                        <div className="flex min-w-0 flex-col">
+                          <Badge className="mb-2.5 w-fit rounded-full px-2.5 text-[11.5px]">
+                            신간 · {book.year}
+                          </Badge>
+                          <h3 className="text-pretty text-[17px] font-semibold leading-snug tracking-tight">
+                            {book.title}
+                          </h3>
+                          <p className="mt-2 text-[13px] text-muted-foreground">
+                            {book.publisher} · {book.role}
+                          </p>
+                        </div>
                       </div>
-                    )}
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-4">
-                         <div className="flex items-center gap-2">
-                           <span className="bg-purple-100/50 text-purple-700 backdrop-blur-md text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Book</span>
-                           {book.badge && (
-                             <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">{book.badge}</span>
-                           )}
-                         </div>
-                         {book.link && <BookOpen size={20} className="text-gray-400 group-hover:text-blue-600 transition-colors" />}
-                      </div>
-                      {book.link ? (
-                        <a href={book.link} target="_blank" rel="noopener noreferrer" className="text-xl font-extrabold text-gray-900 group-hover:text-blue-700 transition-colors line-clamp-2">
-                          {book.title}
+                      {book.blurb && (
+                        <p className="mt-4 text-pretty text-[13.5px] leading-6 text-muted-foreground">
+                          {book.blurb}
+                        </p>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-4 w-fit bg-background"
+                        asChild
+                      >
+                        <a href={book.link} target="_blank" rel="noopener noreferrer">
+                          {book.store ?? '서점에서 보기'}
+                          <ArrowUpRight />
                         </a>
-                      ) : (
-                        <h3 className="text-xl font-extrabold text-gray-900 line-clamp-2">{book.title}</h3>
-                      )}
-                      {book.subtitle && <p className="text-md text-gray-600 mt-2 font-medium">{book.subtitle}</p>}
-                    </div>
-                    <div className="mt-6 pt-4 border-t border-gray-200/30">
-                      <p className="text-sm font-semibold text-gray-500 flex items-center">
-                        <span className="w-2.5 h-2.5 bg-purple-400 rounded-full mr-2.5"></span>
-                        {book.publisher}
-                      </p>
-                    </div>
-                  </Card>
+                      </Button>
+                    </Card>
+                  </li>
                 ))}
-              </div>
+              </ul>
+
+              <ul className="mt-7 grid grid-cols-3 gap-5 sm:gap-7">
+                {otherBooks.map((book) => (
+                  <li key={book.title}>
+                    <a
+                      href={book.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+                    >
+                      <img
+                        src={book.cover}
+                        alt={`${book.title} 표지`}
+                        loading="lazy"
+                        className="aspect-[3/4] w-[86px] rounded-md object-cover shadow-sm ring-1 ring-black/5 transition-shadow group-hover:shadow-md"
+                      />
+                      <h3 className="mt-3 text-pretty text-[13px] font-medium leading-snug underline-offset-4 group-hover:underline">
+                        {book.title}
+                      </h3>
+                      <p className="mt-1 text-xs text-muted-foreground">{book.publisher}</p>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </section>
 
-            {/* Courses - Remote Training Glass Cards */}
-            <section className="animate-fade-in delay-500">
-              <SectionTitle icon={<GraduationCap size={28} />} title="원격연수" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {teacherProfile.courses.map((course, index) => (
-                  <Card key={index} className="flex flex-col h-full group overflow-hidden">
-                    {course.image && (
-                      <div className="relative mb-6 w-full h-44 overflow-hidden rounded-2xl bg-white/60 flex items-center justify-center shadow-md">
-                        <img
-                          src={course.image}
-                          alt={course.title}
-                          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 ease-out"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                          }}
-                        />
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-2">
-                          <span className="bg-indigo-100/50 text-indigo-700 backdrop-blur-md text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Course</span>
-                          {course.badge && (
-                            <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">{course.badge}</span>
+            {/* 원격연수 */}
+            <section id="courses" aria-labelledby="courses-heading" className="scroll-mt-16">
+              <SectionHeading id="courses" title="원격연수" meta={`${courses.length}과정`} />
+              <ul className="-mt-1 divide-y">
+                {courses.map((course) => (
+                  <li key={course.title}>
+                    <a
+                      href={course.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex gap-5 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      <img
+                        src={course.thumb}
+                        alt=""
+                        loading="lazy"
+                        className="hidden h-[70px] w-[118px] shrink-0 rounded-md object-cover ring-1 ring-border grayscale transition-[filter] duration-300 group-hover:grayscale-0 sm:block"
+                      />
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-muted-foreground">
+                          <span className="font-medium text-foreground">{course.platform}</span>
+                          <span aria-hidden className="h-3 w-px bg-border" />
+                          <span>{course.hours}</span>
+                          {course.isNew && (
+                            <Badge className="rounded-full px-2 py-0 text-[10.5px] font-medium">
+                              신규
+                            </Badge>
                           )}
                         </div>
-                        <GraduationCap size={20} className="text-gray-400 group-hover:text-blue-600 transition-colors" />
-                      </div>
-                      <a
-                        href={course.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-lg font-extrabold text-gray-900 group-hover:text-blue-700 transition-colors break-keep leading-snug"
-                      >
-                        {course.title}
-                      </a>
-                      <p className="text-sm text-gray-600 mt-3 leading-relaxed break-keep">{course.description}</p>
-                    </div>
-                    <div className="mt-6 pt-4 border-t border-gray-200/30 flex flex-col gap-3">
-                      <div>
-                        <p className="text-sm font-bold text-gray-700 flex items-center">
-                          <span className="w-2.5 h-2.5 bg-indigo-400 rounded-full mr-2.5"></span>
-                          {course.platform}
+                        <h3 className="mt-1.5 text-pretty text-[15px] font-semibold leading-snug tracking-tight underline-offset-4 group-hover:underline">
+                          {course.title}
+                        </h3>
+                        <p className="mt-1.5 line-clamp-2 text-pretty text-[13px] leading-6 text-muted-foreground">
+                          {course.description}
                         </p>
-                        <p className="text-xs font-medium text-gray-500 mt-1 ml-5">{course.hours}</p>
                       </div>
-                      <a
-                        href={course.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 bg-white/60 backdrop-blur-md border border-white/60 text-blue-700 text-sm font-bold px-4 py-2.5 rounded-2xl shadow-sm hover:bg-blue-600 hover:text-white transition-all duration-300"
-                      >
-                        연수 보기 <ExternalLink size={16} />
-                      </a>
-                    </div>
-                  </Card>
+                    </a>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </section>
 
-            {/* Awards - Compact Glass Cards Grid */}
-            <section className="animate-fade-in delay-500">
-              <SectionTitle icon={<Award size={28} />} title="주요 수상 내역" />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {teacherProfile.awards.map((award, index) => (
-                  <Card key={index} className="flex flex-col justify-between h-full hover:bg-white/60">
-                    <h3 className="text-lg font-bold text-gray-900 mb-3 leading-snug break-keep">
-                      {award.title}
-                    </h3>
-                    <div className="flex items-center justify-end mt-2">
-                      <span className="text-xs font-bold text-blue-700 bg-blue-100/50 backdrop-blur-md px-3 py-1.5 rounded-full shadow-sm">
-                        {award.institution}
-                      </span>
-                    </div>
-                  </Card>
+            {/* 경력 */}
+            <section id="career" aria-labelledby="career-heading" className="scroll-mt-16">
+              <SectionHeading id="career" title="경력" meta={`${careers.length}건`} />
+              <dl className="-mt-1 divide-y">
+                {careers.map((c) => (
+                  <div
+                    key={c.title}
+                    className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 py-3.5"
+                  >
+                    <dt className="text-[14.5px] font-medium">{c.title}</dt>
+                    {c.detail && (
+                      <dd className="text-[13px] text-muted-foreground">{c.detail}</dd>
+                    )}
+                  </div>
                 ))}
-              </div>
+              </dl>
             </section>
 
+            {/* 수상 */}
+            <section id="awards" aria-labelledby="awards-heading" className="scroll-mt-16">
+              <SectionHeading id="awards" title="수상" meta={`${awards.length}건`} />
+              <ul className="-mt-1 divide-y">
+                {topAwards.map((a) => (
+                  <li
+                    key={a.title}
+                    className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 py-3.5"
+                  >
+                    <span className="text-pretty text-[14.5px] font-medium leading-snug">
+                      {a.title}
+                    </span>
+                    <span className="text-[13px] text-muted-foreground">{a.institution}</span>
+                  </li>
+                ))}
+              </ul>
+              <Accordion type="single" collapsible>
+                <AccordionItem value="more" className="border-t-0">
+                  <AccordionTrigger className="text-[13px] text-muted-foreground">
+                    나머지 {moreAwards.length}건 보기
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="divide-y border-t">
+                      {moreAwards.map((a) => (
+                        <li
+                          key={a.title}
+                          className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-1 py-3.5"
+                        >
+                          <span className="text-pretty text-[14.5px] font-medium leading-snug">
+                            {a.title}
+                          </span>
+                          <span className="text-[13px] text-muted-foreground">{a.institution}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </section>
+
+            <footer className="pt-2 text-[13px] text-muted-foreground">
+              {profile.since} · {new Date().getFullYear()}
+            </footer>
           </main>
-
-          {/* Footer */}
-          <footer className="bg-white/40 backdrop-blur-xl text-gray-500 text-center py-10 border-t border-white/50">
-            <p className="font-semibold text-lg">&copy; {new Date().getFullYear()} {teacherProfile.name}</p>
-            <p className="text-sm mt-3 opacity-80 font-medium">Mirim Meister High School</p>
-          </footer>
         </div>
       </div>
     </div>
-  );
-};
-
-export default App;
+  )
+}
